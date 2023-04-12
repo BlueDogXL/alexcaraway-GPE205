@@ -10,6 +10,8 @@ public class PlayerController : Controller
     public KeyCode turnLeftKey;
     public KeyCode turnRightKey;
     public KeyCode shootKey;
+    // score
+    public int score;
 
     // Start is called before the first frame update
     public override void Start()

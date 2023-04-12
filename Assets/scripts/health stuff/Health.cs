@@ -1,15 +1,22 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.UI;
 public class Health : MonoBehaviour
 {
-    private float currentHealth; // current health isn't useful to designers so we hide it in the inspector
+    public float currentHealth; // current health isn't useful to designers so we usually hide it in the inspector EXCEPT i wanna let the AI use it to determine when to flee so i'm publicizing it
     public float maxHealth;
+    public Image image;
     // Start is called before the first frame update
     void Start()
     {
         currentHealth = maxHealth; // when we start we usually haven't taken damage so we can just set current health to max health
+        // get image component
+        
+    }
+    void Update()
+    {
+        image.fillAmount = (currentHealth / maxHealth);
     }
     public void TakeDamage(float amount, Pawn source) // get a damage and responsibility from elsewhere
     {
@@ -21,6 +28,12 @@ public class Health : MonoBehaviour
         {
             Die(source);
         }
+    }
+    public void Heal(float amount, Pawn source)
+    {
+        currentHealth = currentHealth + amount;
+        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
+        Debug.Log(source.name + " healed " + amount + " damage from itself");
     }
 
     public void Die(Pawn source)
