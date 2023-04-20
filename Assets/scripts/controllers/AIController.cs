@@ -60,6 +60,11 @@ public class AIController : Controller
                     break;
             case AIState.Chase:
                 // Do work
+                if (IsHasTarget() == false)
+                {
+                    ChangeState(AIState.ChooseTarget);
+                    break;
+                }
                 DoSeekState();
                 // Check for transitions
                 if ((IsDistanceLessThan(target, 5)) && (CanSee(target) == true))
@@ -76,6 +81,11 @@ public class AIController : Controller
                 }
                 break;
             case AIState.Attack:
+                if (IsHasTarget() == false)
+                {
+                    ChangeState(AIState.ChooseTarget);
+                    break;
+                }
                 DoAttackState();
                 if (IsHasTarget() == false)
                 {
@@ -91,11 +101,12 @@ public class AIController : Controller
                 }
                 break;
             case AIState.Flee:
-                DoFleeState();
                 if (IsHasTarget() == false)
                 {
                     ChangeState(AIState.ChooseTarget);
+                    break;
                 }
+                DoFleeState();
                 break;
             case AIState.ChooseTarget:
                 DoChooseTargetState();
@@ -226,7 +237,7 @@ public class AIController : Controller
             if (GameManager.instance.players != null)
             {
                 // And there are players in it
-                if (GameManager.instance.players.Count > 0)
+                if (GameManager.instance.players.Count > 0 && GameManager.instance.players[0].pawn != null)
                 {
                     //Then target the gameObject of the pawn of the first player controller in the list
                     target = GameManager.instance.players[0].pawn.gameObject;

@@ -16,10 +16,8 @@ public class MapGenerator : MonoBehaviour
     public bool isMapOfTheDay;
     public bool isSetSeed;
     public bool isRandom;
-    
-    private 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         if (isMapOfTheDay)
         {

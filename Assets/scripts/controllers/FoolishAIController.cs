@@ -34,6 +34,11 @@ public class FoolishAIController : AIController
                 }
                 break;
             case AIState.Chase:
+                if (IsHasTarget() == false)
+                {
+                    ChangeState(AIState.ChooseTarget);
+                    break;
+                }
                 // Do work
                 DoSeekState();
                 // Check for transitions
@@ -51,6 +56,11 @@ public class FoolishAIController : AIController
                 }
                 break;
             case AIState.Attack:
+                if (IsHasTarget() == false)
+                {
+                    ChangeState(AIState.ChooseTarget);
+                    break;
+                }
                 DoAttackState();
                 if (IsHasTarget() == false)
                 {

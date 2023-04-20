@@ -1,7 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.UI;
+using TMPro;
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
@@ -14,6 +15,7 @@ public class GameManager : MonoBehaviour
     public List<AIController> enemies;
     public int numberOfEnemies;
     public GameObject[] aiPrefabs;
+    public GameObject mapGeneratorPrefab;
     // game states
     public GameObject TitleScreenStateObject;
     public GameObject MainMenuStateObject;
@@ -27,7 +29,13 @@ public class GameManager : MonoBehaviour
     public KeyCode optionsKey;
     public KeyCode creditsKey;
     public KeyCode gameplayKey;
-    public KeyCode gameOverKey;
+    public KeyCode gameOverLoseKey;
+    public KeyCode gameOverWinKey;
+    // text i guess
+    public TextMeshProUGUI playerOneScore;
+    public TextMeshProUGUI playerOneLives;
+    public TextMeshProUGUI playerTwoScore;
+    public TextMeshProUGUI playerTwoLives;
     void Awake() // game manager used extreme speed and does this before start()
     {
         if (instance == null) // if there is no game manager already
@@ -43,7 +51,10 @@ public class GameManager : MonoBehaviour
         players = new List<PlayerController>(); // list of players for player controllers to add themselves to
         enemies = new List<AIController>();
     }
-
+    public void SpawnMap()
+    {
+        GameObject newMapGen = Instantiate(mapGeneratorPrefab, Vector3.zero, Quaternion.identity);
+    }
     public void SpawnPlayer()
     {
         PawnSpawnPoint[] possiblePlayerSpawns = FindObjectsOfType<PawnSpawnPoint>();
@@ -53,29 +64,41 @@ public class GameManager : MonoBehaviour
         PlayerController newController = newPlayerObject.GetComponent<PlayerController>();
         Pawn newPawn = newPawnObject.GetComponent<Pawn>();
         newController.pawn = newPawn; // pretty much use the player prefabs to make a player
-        newPawn.player = newController;
+        newPawn.controller = newController;
         players.Add(newController);
     }
     public void SpawnEnemies()
     {
         AISpawnPoint[] possibleAISpawns = FindObjectsOfType<AISpawnPoint>();
-        
+
         for (int i = 0; i <= numberOfEnemies; i++)
         {
             int randomSpawn = Random.Range(0, possibleAISpawns.Length);
             int randomPrefab = Random.Range(0, aiPrefabs.Length);
             GameObject newAIObject = Instantiate(aiPrefabs[randomPrefab], possibleAISpawns[randomSpawn].transform.position, possibleAISpawns[randomSpawn].transform.rotation);
             AIController newController = newAIObject.GetComponent<AIController>();
+            TankPawn newPawn = newAIObject.GetComponent<TankPawn>();
+            newController.pawn = newPawn;
+            newPawn.controller = newController;
             enemies.Add(newController);
         }
     }
-    
+
+    public void RespawnPlayer(Controller oldController)
+    {
+        PawnSpawnPoint[] possiblePlayerSpawns = FindObjectsOfType<PawnSpawnPoint>();
+        int randomSpawn = Random.Range(0, possiblePlayerSpawns.Length);
+        GameObject newPawnObject = Instantiate(playerPawnPrefab, possiblePlayerSpawns[randomSpawn].transform.position, possiblePlayerSpawns[randomSpawn].transform.rotation);
+        Pawn newPawn = newPawnObject.GetComponent<Pawn>();
+        oldController.pawn = newPawn; // pretty much use the player pawn prefabs to remake a player while keeping the same controller
+        newPawn.controller = oldController;
+    }
     void Start()
     {
-        // SpawnPlayer(); // do all that prefab stuff
-        // SpawnEnemies();
         DeactivateAllStates();
         ActivateTitleScreen();
+        SetPlayerOneScore(0);
+        SetPlayerOneLives(players[0].lives);
     }
 
     private void Update()
@@ -100,9 +123,13 @@ public class GameManager : MonoBehaviour
         {
             ActivateGameplayScreen();
         }
-        if (Input.GetKeyDown(gameOverKey))
+        if (Input.GetKeyDown(gameOverLoseKey))
         {
-            ActivateGameOverScreen();
+            ActivateGameOverScreen(false);
+        }
+        if (Input.GetKeyDown(gameOverWinKey))
+        {
+            ActivateGameOverScreen(true);
         }
     }
     private void DeactivateAllStates()
@@ -153,13 +180,67 @@ public class GameManager : MonoBehaviour
         // set em up
         GameplayStateObject.SetActive(true);
         //insert whatever else here
+        players.Clear();
+        enemies.Clear();
+        MapGenerator[] existingMap = FindObjectsOfType<MapGenerator>();
+        for (int i = 0; i < existingMap.Length;) 
+        {
+            Destroy(existingMap[i]);
+        }
+        SpawnMap();
+        SpawnPlayer(); // do all that prefab stuff
+        SpawnEnemies();
+
     }
-    public void ActivateGameOverScreen()
+    public void TryGameOver()
+    {
+        bool isGameOver = true;
+        for (int i = 0; i < players.Count; i++)
+        {
+            if (players[i].lives > 0)
+            {
+                isGameOver = false;
+            }
+        }
+        if (isGameOver == true)
+        {
+            ActivateGameOverScreen(false);
+        }
+        isGameOver = true;
+        for (int i = 0; i < enemies.Count; i++)
+        {
+            if (enemies[i].lives > 0)
+            {
+                isGameOver = false;
+            }
+        }
+        if (isGameOver == true)
+        {
+            ActivateGameOverScreen(true);
+        }
+    }
+    public void ActivateGameOverScreen(bool victory)
     {
         // shut er down
         DeactivateAllStates();
         // set em up
         GameOverScreenStateObject.SetActive(true);
         //insert whatever else here
+    }
+    public void SetPlayerOneScore(int score)
+    {
+        playerOneScore.text = "SCORE: " + score;
+    }
+    public void SetPlayerOneLives(int lives)
+    {
+        playerOneLives.text = "LIVES: " + lives;
+    }
+    public void SetPlayerTwoScore(int score)
+    {
+        playerTwoScore.text = "SCORE: " + score;
+    }
+    public void SetPlayerTwoLives(int lives)
+    {
+        playerTwoLives.text = "LIVES: " + lives;
     }
 }

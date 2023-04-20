@@ -6,7 +6,7 @@ public abstract class Pawn : MonoBehaviour
 {
     public float moveSpeed;
     public float turnSpeed;
-    public PlayerController player;
+    public Controller controller;
     // Start is called before the first frame update
     public virtual void Start()
     {

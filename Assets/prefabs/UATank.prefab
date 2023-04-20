@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 912173805501337394}
   - component: {fileID: 8690751038344278482}
-  - component: {fileID: 6788705117320854781}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -76,14 +75,6 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
---- !u!81 &6788705117320854781
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 565101191899008019}
-  m_Enabled: 1
 --- !u!1 &1182554765922605453
 GameObject:
   m_ObjectHideFlags: 0
@@ -206,7 +197,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSpeed: 10
   turnSpeed: 180
-  player: {fileID: 0}
+  controller: {fileID: 0}
   shooter: {fileID: 0}
   mover: {fileID: 0}
   shellPrefab: {fileID: 8908320633149521334, guid: 951d5af574804c8489585e21dbe5c537, type: 3}
@@ -285,6 +276,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentHealth: 0
   maxHealth: 100
+  scoreOnDeath: 0
   image: {fileID: 8894410661840919054}
 --- !u!114 &6163273039990790902
 MonoBehaviour:
@@ -322,7 +314,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4623574111123687188}
   m_LocalRotation: {x: -0, y: 0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.0078088045, y: 0.604, z: 1.428}
+  m_LocalPosition: {x: 0.0078088045, y: 0.604, z: 1.785}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

@@ -6,12 +6,12 @@ public class Health : MonoBehaviour
 {
     public float currentHealth; // current health isn't useful to designers so we usually hide it in the inspector EXCEPT i wanna let the AI use it to determine when to flee so i'm publicizing it
     public float maxHealth;
+    public int scoreOnDeath;
     public Image image;
     // Start is called before the first frame update
     void Start()
     {
-        currentHealth = maxHealth; // when we start we usually haven't taken damage so we can just set current health to max health
-        // get image component
+        currentHealth = maxHealth; // when we start we usually haven't taken damage so we can just set current health to max healths
         
     }
     void Update()
@@ -39,6 +39,17 @@ public class Health : MonoBehaviour
     public void Die(Pawn source)
     {
         Debug.Log(source.name + " destroyed " + gameObject.name);
+        if (source.controller != null)
+        {
+            source.controller.AddToScore(scoreOnDeath);
+        }
+        Pawn thisPawn = GetComponent<Pawn>();
+        thisPawn.controller.lives--;
+        if (thisPawn.controller.lives > 0)
+        {
+            GameManager.instance.RespawnPlayer(thisPawn.controller);
+        }
+        GameManager.instance.TryGameOver();
         Destroy(gameObject); // you lost at tank game, and everyone in the debug log knows you suck
     }
 }

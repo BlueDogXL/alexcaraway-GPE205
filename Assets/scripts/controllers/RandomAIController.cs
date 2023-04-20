@@ -23,16 +23,26 @@ public class RandomAIController : AIController
         {
             case AIState.ChooseTarget:
                 DoChooseTargetState();
-                if (CanHear(target))
+                if (target != null && CanHear(target))
                 {
                     ChangeState(AIState.Chase);
                 }
                 break;
             case AIState.Chase:
+                if (IsHasTarget() == false)
+                {
+                    ChangeState(AIState.ChooseTarget);
+                    break;
+                }
                 DoSeekState();
                 ChangeState(AIState.Attack);
                 break;
             case AIState.Attack:
+                if (IsHasTarget() == false)
+                {
+                    ChangeState(AIState.ChooseTarget);
+                    break;
+                }
                 DoAttackState();
                 ChangeState(AIState.Chase);
                 break;
